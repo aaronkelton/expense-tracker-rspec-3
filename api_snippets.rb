@@ -1,9 +1,9 @@
 class API < Sinatra::Base
-  def initialize
-    @ledger = Ledger.new
-    super() # rest of initialization from Sinatra
+  def initialize(ledger:)
+    @ledger = ledger
+    super()
   end
 end
 
 # Later, callers do this:
-# app = API.new
+app = API.new(ledger: Ledger.new)
