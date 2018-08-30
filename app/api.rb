@@ -9,6 +9,10 @@ module ExpenseTracker
       super()
     end
 
+    get '/expenses/:date' do
+      expense = @ledger.expenses_on(date)
+    end
+
     post '/expenses' do
       expense = JSON.parse(request.body.read)
       result = @ledger.record(expense)

@@ -11,6 +11,35 @@ module ExpenseTracker
 
     let(:ledger) { instance_double('ExpenseTracker::Ledger') }
 
+    describe 'GET /expenses/:date' do
+      context 'when expenses exist on the given date' do
+        it 'returns the expense records as JSON' do
+          date = DateTime.now
+          expense = {'some' => 'data'}
+          allow(ledger).to receive(:expenses_on)
+            .with(date)
+            .and_return(expense.to_json)
+          get_last_parsed(expense)
+        end
+
+        it 'responds with a 200 (OK)' do
+          date = DateTime.now
+          expense = {'some' => 'data'}
+          allow(ledger).to receive(:expenses_on)
+            .with(date)
+            .and_return(expense.to_json)
+          get "/expenses/#{date}", JSON.parse(expense)
+
+          expect(last_response.status).to eq(200)
+        end
+      end
+
+      context 'when there are no expenses on the given date' do
+        it 'returns an empty array as JSON'
+        it 'responds with a 200 (OK)'
+      end
+    end
+
     describe 'POST /expenses' do
       context 'when the expense fails validation' do
         let(:expense) { { 'some' => 'data' } }
@@ -23,8 +52,7 @@ module ExpenseTracker
         it 'returns an error message' do
           post '/expenses', JSON.generate(expense)
 
-          parsed = JSON.parse(last_response.body)
-          expect(parsed).to include('error' => 'Expense incomplete')
+          get_last_parsed('error' => 'Expense incomplete')
         end
 
         it 'responds with a 422 (Unprocessable entity)' do
@@ -46,8 +74,7 @@ module ExpenseTracker
         it 'returns the expense id' do
           post '/expenses', JSON.generate(expense)
 
-          parsed = JSON.parse(last_response.body)
-          expect(parsed).to include('expense_id' => 417)
+          get_last_parsed('expense_id' => 417)
         end
 
         it 'responds with a 200 (OK)' do
@@ -57,9 +84,9 @@ module ExpenseTracker
         end
       end
 
-      context 'when the expense fails validation' do
-        it 'returns an error message'
-        it 'responds with a 422 (Unprocessable entity)'
+      def get_last_parsed(parsed_sample)
+        parsed = JSON.parse(last_response.body)
+        expect(parsed).to include(parsed_sample)
       end
     end
   end
