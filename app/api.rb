@@ -10,7 +10,7 @@ module ExpenseTracker
     end
 
     get '/expenses/:date' do
-      expense = @ledger.expenses_on(date)
+      JSON.generate(@ledger.expenses_on(params[:date]))
     end
 
     post '/expenses' do
