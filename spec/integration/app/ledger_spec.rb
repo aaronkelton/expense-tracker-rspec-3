@@ -27,6 +27,20 @@ module ExpenseTracker
           )]
         end
       end
+
+      context 'when the expense lacks a payee' do
+        it 'rejects the expense as invalid' do
+          expense.delete('payee')
+
+          result = ledger.record(expense)
+
+          expect(result).not_to be_success
+          expect(result.expense_id).to eq(nil)
+          expect(result.error_message).to include('`payee` is required')
+
+          expect(DB[:expenses].count).to eq(0)
+        end
+      end
     end
   end
 end
