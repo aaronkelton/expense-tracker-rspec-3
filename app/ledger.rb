@@ -13,7 +13,7 @@ module ExpenseTracker
     end
 
     def expenses_on(date)
-      # fill in on chapter 6
+      DB[:expenses].where(date: date).all
     end
   end
 end

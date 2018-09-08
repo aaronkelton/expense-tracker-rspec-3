@@ -12,6 +12,23 @@ module ExpenseTracker
       }
     end
 
+    describe '#expenses_on' do
+      it 'returns all expenses for the provided date' do
+        result_1 = ledger.record(expense.merge('date' => '2017-06-10'))
+        result_2 = ledger.record(expense.merge('date' => '2017-06-10'))
+        result_3 = ledger.record(expense.merge('date' => '2017-06-11'))
+
+        expect(ledger.expenses_on('2017-06-10')).to contain_exactly(
+          a_hash_including(id: result_1.expense_id),
+          a_hash_including(id: result_2.expense_id)
+        )
+      end
+
+      it 'returns a blank array when there are no matching expenses' do
+        expect(ledger.expenses_on('2017-06-10')).to eq([])
+      end
+    end
+
     describe '#record' do
       context 'with a valid expense' do
         it 'successfully saves the expense in the DB' do
